@@ -1,37 +1,51 @@
-# Django et Django REST Framework
-Django==4.2.9
-djangorestframework==3.14.0
-django-cors-headers==4.3.1
-
-# Authentification et sécurité
-djangorestframework-simplejwt==5.3.1
-django-filter==23.5
+asgiref==3.11.1
+attrs==25.4.0
+black==23.12.1
+cffi==2.0.0
+click==8.3.1
+colorama==0.4.6
 cryptography==42.0.0
-
-# Documentation API
+dj-database-url==3.1.1
+Django==4.2.9
+django-cors-headers==4.3.1
+django-filter==23.5
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
 drf-spectacular==0.27.0
-
-pymysql
-
-# Environnement
-python-decouple==3.8
-python-dotenv==1.0.0
-
-# Utilitaires
-Pillow
-pytz==2023.3
-
-# Testing
+factory-boy==3.3.0
+Faker==22.0.0
+flake8==7.0.0
+gunicorn==21.2.0
+inflection==0.5.1
+iniconfig==2.3.0
+isort==5.13.2
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+mccabe==0.7.0
+mypy_extensions==1.1.0
+packaging==26.0
+pathspec==1.0.4
+pillow==12.1.1
+platformdirs==4.9.1
+pluggy==1.6.0
+psycopg2-binary==2.9.11
+pycodestyle==2.11.1
+pycparser==3.0
+pyflakes==3.2.0
+PyJWT==2.11.0
+PyMySQL==1.1.2
 pytest==7.4.4
 pytest-django==4.7.0
-factory-boy==3.3.0
-faker==22.0.0
-
-# Production
-gunicorn==21.2.0
+python-dateutil==2.9.0.post0
+python-decouple==3.8
+python-dotenv==1.0.0
+pytz==2023.3
+PyYAML==6.0.3
+referencing==0.37.0
+rpds-py==0.30.0
+six==1.17.0
+sqlparse==0.5.5
+typing_extensions==4.15.0
+tzdata==2025.3
+uritemplate==4.2.0
 whitenoise==6.6.0
-
-# Code Quality
-black==23.12.1
-flake8==7.0.0
-isort==5.13.2
