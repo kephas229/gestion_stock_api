@@ -6,8 +6,11 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from decouple import config, Csv
+from urllib.parse import urlparse
+import dj_database_url
 import pymysql
 pymysql.install_as_MySQLdb()
+    
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -79,22 +82,36 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #   - Local    : localhost
 #   - Docker   : db  (nom du service dans docker-compose)
 # ============================================================
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME', default='gestion_stock_db'),
-        'USER': config('DB_USER', default='root'),
-        'PASSWORD': config('DB_PASSWORD', default='root'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-        'CONN_MAX_AGE': 60,
-    }
-}
+# BASE DE DONNÉES - MySQL (local) / PostgreSQL (Render)
+# ============================================================
 
+if os.getenv("DATABASE_URL"):
+    # ✅ Render PostgreSQL détecté automatiquement
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=60,
+            ssl_require=True
+        )
+    }
+
+else:
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': config('DB_NAME', default='gestion_stock_db'),
+            'USER': config('DB_USER', default='root'),
+            'PASSWORD': config('DB_PASSWORD', default='root'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='3306'),
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+            'CONN_MAX_AGE': 60,
+        }
+    }
 # ============================================================
 # AUTH
 # ============================================================
