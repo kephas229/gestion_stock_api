@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from decouple import config, Csv
-from urllib.parse import urlparse
 import dj_database_url
 import pymysql
 pymysql.install_as_MySQLdb()
