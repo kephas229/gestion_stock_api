@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # ============================================================
+  # BASE DE DONNÉES MySQL
+  # ============================================================
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-gestion_stock_db}
+      MYSQL_USER: ${DB_USER:-gestion_stock_user}
+      MYSQL_PASSWORD:  gestion_stock_password_securisee
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_securisee}
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password_securisee}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ============================================================
+  # APPLICATION DJANGO
+  # ============================================================
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    environment:
+      - DB_HOST=db  # Pointe vers le container MySQL
+    volumes:
+      - ./:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - logs_volume:/app/logs
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ============================================================
+  # NGINX - Reverse Proxy
+  # ============================================================
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+    depends_on:
+      - web
+
+volumes:
+  mysql_data:
+    name: gestion_stock_api_mysql_data
+  static_volume:
+  media_volume:
+  logs_volume:
