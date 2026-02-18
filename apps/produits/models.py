@@ -200,10 +200,11 @@ class Produit(models.Model):
     
     @property
     def marge_beneficiaire(self):
-        """Calcule la marge bénéficiaire en pourcentage"""
-        if self.prix_achat > 0:
-            return ((self.prix_vente - self.prix_achat) / self.prix_achat) * 100
+        if self.prix_achat is not None and self.prix_vente is not None:
+            if self.prix_achat > 0:
+                return ((self.prix_vente - self.prix_achat) / self.prix_achat) * 100
         return 0
+
     
     @property
     def benefice_unitaire(self):
