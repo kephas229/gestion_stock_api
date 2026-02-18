@@ -130,7 +130,7 @@ class Produit(models.Model):
     # Seuils de stock
     seuil_alerte = models.IntegerField(
         _('seuil d\'alerte'),
-        default=10,
+        default=5,
         validators=[MinValueValidator(0)],
         help_text=_('Niveau de stock minimum avant alerte')
     )

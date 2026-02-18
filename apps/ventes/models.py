@@ -127,18 +127,24 @@ class Vente(models.Model):
     
     @property
     def montant_restant(self):
-        """Calcule le montant restant à payer"""
-        return self.montant_total - self.montant_paye
-    
+        total = self.montant_total or Decimal("0.00")
+        paye = self.montant_paye or Decimal("0.00")
+        return total - paye
+
+
     @property
     def montant_net(self):
-        """Calcule le montant net après remise"""
-        return self.montant_total - self.remise
-    
+        total = self.montant_total or Decimal("0.00")
+        remise = self.remise or Decimal("0.00")
+        return total - remise
+
+
     @property
     def est_payee(self):
-        """Vérifie si la vente est entièrement payée"""
-        return self.montant_paye >= self.montant_total
+        total = self.montant_total or Decimal("0.00")
+        paye = self.montant_paye or Decimal("0.00")
+        return paye >= total
+
     
     def annuler(self, utilisateur, motif):
         """Annule la vente"""
@@ -221,16 +227,22 @@ class LigneVente(models.Model):
     
     @property
     def montant_ligne(self):
-        """Calcule le montant total de la ligne"""
-        return (self.prix_unitaire * self.quantite) - self.remise_ligne
-    
+        """Calcul du montant de la ligne après remise"""
+        prix = self.prix_unitaire or Decimal("0.00")
+        quantite = self.quantite or 0
+        remise = self.remise_ligne or Decimal("0.00")
+        return (prix * quantite) - remise
+
+
     @property
     def montant_brut(self):
-        """Calcule le montant brut avant remise"""
-        return self.prix_unitaire * self.quantite
+        """Calcul du montant brut de la ligne avant remise"""
+        prix = self.prix_unitaire or Decimal("0.00")
+        quantite = self.quantite or 0
+        return prix * quantite
+
     
     def save(self, *args, **kwargs):
-        # Définir le prix unitaire au prix de vente actuel du produit si non spécifié
-        if not self.prix_unitaire:
+        if self.prix_unitaire is None:
             self.prix_unitaire = self.produit.prix_vente
         super().save(*args, **kwargs)
