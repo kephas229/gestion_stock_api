@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.utils import timezone
-
+from django.core.exceptions import ValidationError
 
 class Vente(models.Model):
     """
@@ -125,6 +125,12 @@ class Vente(models.Model):
     def __str__(self):
         return f"Vente #{self.numero_vente} - {self.magasin.nom}"
     
+    def update_montant_total(self):
+        total = sum(ligne.montant_ligne for ligne in self.lignes.all())
+        self.montant_total = total
+        self.save(update_fields=["montant_total"])
+
+    
     @property
     def montant_restant(self):
         total = self.montant_total or Decimal("0.00")
@@ -225,6 +231,20 @@ class LigneVente(models.Model):
     def __str__(self):
         return f"{self.produit.nom} x {self.quantite}"
     
+    def clean(self):
+
+
+    # Prix unitaire = prix de vente du produit
+        if self.produit:
+            self.prix_unitaire = self.produit.prix_vente
+
+        # Vérifier stock
+        if self.produit and self.quantite:
+            if self.quantite > self.produit.quantite_stock:
+                raise ValidationError(
+                f"Stock insuffisant. Disponible : {self.produit.quantite_stock}"
+            )
+
     @property
     def montant_ligne(self):
         """Calcul du montant de la ligne après remise"""
@@ -243,6 +263,9 @@ class LigneVente(models.Model):
 
     
     def save(self, *args, **kwargs):
-        if self.prix_unitaire is None:
+        # Mettre à jour le prix unitaire à partir du produit
+        if self.produit:
             self.prix_unitaire = self.produit.prix_vente
         super().save(*args, **kwargs)
+        # Mettre à jour le montant total de la vente
+        self.vente.update_montant_total()

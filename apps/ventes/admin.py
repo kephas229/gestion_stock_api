@@ -8,7 +8,7 @@ from apps.ventes.models import Vente, LigneVente
 class LigneVenteInline(admin.TabularInline):
     model = LigneVente
     extra = 0
-    readonly_fields = ['montant_ligne']
+    readonly_fields = ['prix_unitaire','montant_ligne']
 
 
 @admin.register(Vente)
