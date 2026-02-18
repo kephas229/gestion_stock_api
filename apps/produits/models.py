@@ -208,8 +208,10 @@ class Produit(models.Model):
     
     @property
     def benefice_unitaire(self):
-        """Calcule le bénéfice unitaire"""
-        return self.prix_vente - self.prix_achat
+        """Retourne le bénéfice unitaire du produit"""
+        if self.prix_achat is not None and self.prix_vente is not None:
+            return self.prix_vente - self.prix_achat
+        return Decimal("0.00")
     
     def stock_total(self):
         """Retourne le stock total du produit dans tous les magasins"""
