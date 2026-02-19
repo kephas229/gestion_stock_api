@@ -100,9 +100,6 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': config('DB_NAME', default='gestion_stock_db'),
-            'OPTIONS': {
-            'disable_server_side_cursors': True,
-            },
         }
     }
 # ============================================================
